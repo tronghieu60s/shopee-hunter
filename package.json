@@ -1,0 +1,16 @@
+{
+  "name": "shopee-hunter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "puppeteer": "^5.2.1",
+    "readline-sync": "^1.4.10"
+  }
+}
