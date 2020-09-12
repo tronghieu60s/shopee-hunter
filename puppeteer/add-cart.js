@@ -1,35 +1,45 @@
 const puppeteer = require("puppeteer");
 const { headless, userDataDir } = require("../common/puppeteer");
 
-module.exports = async () => {
+module.exports = async (data) => {
+  if (data.length === 0) return console.log("Empty Item.");
+  if (data.length > 20) return console.log("Maximum Item.");
+
   const browser = await puppeteer.launch({
     headless,
     userDataDir,
+    defaultViewport: null
   });
+
+  for (let i = 0; i < data.length; i++) {
+    const page = await browser.newPage();
+    const { variation, url } = data[i];
+    await page.goto(url);
+
+    if (variation) {
+      await page.waitForSelector(".product-variation");
+      await page.evaluate((variation) => {
+        let products = document.querySelectorAll(".product-variation");
+        products.forEach((product) => {
+          if (product.innerText === variation) product.click();
+        });
+      }, variation);
+    }
+
+    await page.waitForSelector(".btn.btn-tinted.btn--l.YtgjXY._3a6p6c");
+    await page.click(".btn.btn-tinted.btn--l.YtgjXY._3a6p6c");
+
+    await page.close();
+  }
+
   const page = await browser.newPage();
-  await page.goto(
-    "https://shopee.vn/B%C3%BAp-b%C3%AA-model-m%E1%BA%AFt-g%E1%BA%AFn-3d-i.21102682.7010837033"
-  );
+  await page.goto("https://shopee.vn/cart/");
 
-  const productVariations = await page.evaluate(() => {
-    let products = document.querySelectorAll(
-      ".product-variation:not(.product-variation--disabled)"
-    );
-    products = [...products];
-    const productsArrText = products.map((product) => product.innerText);
-    return productsArrText;
-  });
+  await page.waitForSelector(".cart-page-footer__product-count.clear-btn-style");
+  await page.click(".cart-page-footer__product-count.clear-btn-style");
 
-  const selectProductVariation = productVariations[0];
-  await page.evaluate((selectProductVariation) => {
-    let products = document.querySelectorAll(".product-variation");
-    products.forEach((product) => {
-      if (product.innerHTML === selectProductVariation) product.click();
-    });
-  }, selectProductVariation);
+  await page.waitFor(1000);
+  await page.click(".shopee-button-solid.shopee-button-solid--primary");
 
-  await page.waitForSelector(".btn.btn-tinted.btn--l.YtgjXY._3a6p6c");
-  await page.click(".btn.btn-tinted.btn--l.YtgjXY._3a6p6c");
-
-  //   await browser.close();
+  // await browser.close();
 };
