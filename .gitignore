@@ -3,5 +3,5 @@ node_modules
 .env
 
 # data local
-data.json
+products.json
 user_data

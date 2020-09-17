@@ -3,7 +3,7 @@ const { headless, userDataDir } = require("../common/puppeteer");
 
 const handleAddCart = async (page, product) => {
   const { variation, url } = product;
-  await page.goto(url);
+  await page.goto(url, { waitUntil: "networkidle0" });
 
   if (variation) {
     await page.waitForSelector(".product-variation");
@@ -21,20 +21,28 @@ const handleAddCart = async (page, product) => {
   await page.close();
 };
 
-module.exports = async (data) => {
+module.exports = async (products) => {
   const browser = await puppeteer.launch({
     headless,
     userDataDir,
     defaultViewport: null,
   });
 
-  for (let i = 0; i < data.length - 1; i++) await browser.newPage();
+  const arrNewPage = [];
+  for (let i = 0; i < products.length - 1; i++)
+    arrNewPage.push(browser.newPage());
+  await Promise.all(arrNewPage);
 
-  let pages = await browser.pages();
+  const pages = await browser.pages();
+  const arrAddProducts = [];
+  for (let i = 0; i < pages.length; i++)
+    arrAddProducts.push(handleAddCart(pages[i], products[i]));
+  await Promise.all(arrAddProducts);
 
-  Promise.all([
-    handleAddCart(pages[0], data[0]),
-    handleAddCart(pages[1], data[1]),
-    handleAddCart(pages[2], data[2])
-  ]);
+  const page = await browser.newPage();
+  await page.goto("https://shopee.vn/cart/", { waitUntil: "networkidle0" });
+  await page.click(".cart-page-footer__product-count.clear-btn-style");
+
+  await page.waitFor(1000);
+  await page.click(".shopee-button-solid.shopee-button-solid--primary");
 };
