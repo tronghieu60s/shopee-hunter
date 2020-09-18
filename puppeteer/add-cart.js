@@ -1,5 +1,4 @@
-const puppeteer = require("puppeteer");
-const { headless, userDataDir } = require("../common/puppeteer");
+const shippingUnit = require("./shipping-unit");
 
 const handleAddCart = async (page, product) => {
   const { variation, url } = product;
@@ -21,13 +20,7 @@ const handleAddCart = async (page, product) => {
   await page.close();
 };
 
-module.exports = async (products) => {
-  const browser = await puppeteer.launch({
-    headless,
-    userDataDir,
-    defaultViewport: null,
-  });
-
+module.exports = async (browser, products) => {
   const arrNewPage = [];
   for (let i = 0; i < products.length - 1; i++)
     arrNewPage.push(browser.newPage());
@@ -44,5 +37,8 @@ module.exports = async (products) => {
   await page.click(".cart-page-footer__product-count.clear-btn-style");
 
   await page.waitFor(1000);
-  await page.click(".shopee-button-solid.shopee-button-solid--primary");
+  await Promise.all([
+    page.click(".shopee-button-solid.shopee-button-solid--primary"),
+    page.waitForNavigation({ waitUntil: "networkidle2" }),
+  ]);
 };

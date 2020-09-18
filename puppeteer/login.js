@@ -1,14 +1,11 @@
 require("dotenv").config();
-const puppeteer = require("puppeteer");
 const readlineSync = require("readline-sync");
-const { userDataDir } = require("../common/puppeteer");
 
 const username = process.env.SHOPEE_USERNAME;
 const password = process.env.SHOPEE_PASSWORD;
 
-module.exports = async () => {
+module.exports = async (browser) => {
   console.log("Wait a little. Loading...");
-  const browser = await puppeteer.launch({ headless: true, userDataDir });
   const page = await browser.newPage();
   await page.goto("https://shopee.vn/buyer/login", {
     waitUntil: "networkidle0",
