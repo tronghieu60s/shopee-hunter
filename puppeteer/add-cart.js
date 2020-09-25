@@ -1,5 +1,3 @@
-const shippingUnit = require("./shipping-unit");
-
 const handleAddCart = async (page, product) => {
   const { variation, url } = product;
   await page.goto(url, { waitUntil: "networkidle0" });
