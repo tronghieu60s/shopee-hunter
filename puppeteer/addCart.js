@@ -5,7 +5,7 @@ const handleAddCart = async (page, product) => {
   if (variation && String(variation).length !== 0) {
     await page.waitForSelector(".product-variation");
     await page.evaluate((variation) => {
-      let products = document.querySelectorAll(".product-variation");
+      const products = document.querySelectorAll(".product-variation");
       products.forEach((product) => {
         if (product.innerText === variation) product.click();
       });
@@ -29,14 +29,4 @@ module.exports = async (browser, products) => {
   for (let i = 0; i < pages.length; i++)
     arrAddProducts.push(handleAddCart(pages[i], products[i]));
   await Promise.all(arrAddProducts);
-
-  const page = await browser.newPage();
-  await page.goto("https://shopee.vn/cart/", { waitUntil: "networkidle0" });
-  await page.click(".cart-page-footer__product-count.clear-btn-style");
-
-  await page.waitFor(1000);
-  await Promise.all([
-    page.click(".shopee-button-solid.shopee-button-solid--primary"),
-    page.waitForNavigation({ waitUntil: "networkidle2" }),
-  ]);
 };

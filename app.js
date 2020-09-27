@@ -5,6 +5,7 @@ const loginExists = fs.existsSync(userDataDir);
 
 const addCart = require("./puppeteer/addCart");
 const autoLogin = require("./puppeteer/autoLogin");
+const checkout = require("./puppeteer/checkout");
 const products = require("./products.json");
 
 (async () => {
@@ -19,5 +20,6 @@ const products = require("./products.json");
       return console.log("Not Products. Please Add New Product");
     if (products.length > 20) return console.log("Maximum Products.");
     await addCart(browser, products);
+    await checkout(browser);
   } else autoLogin(browser);
 })();
