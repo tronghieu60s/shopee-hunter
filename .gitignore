@@ -1,6 +1,5 @@
 # modules
 node_modules
-.env
 
 # data local
 products.json

@@ -3,8 +3,8 @@ const puppeteer = require("puppeteer");
 const { headless, userDataDir } = require("./common/puppeteer");
 const loginExists = fs.existsSync(userDataDir);
 
-const addCart = require("./puppeteer/add-cart");
-const login = require("./puppeteer/login");
+const addCart = require("./puppeteer/addCart");
+const autoLogin = require("./puppeteer/autoLogin");
 const products = require("./products.json");
 
 (async () => {
@@ -14,12 +14,10 @@ const products = require("./products.json");
     defaultViewport: null,
   });
 
-  if (!loginExists) login(browser);
-  else {
+  if (loginExists) {
     if (products.length === 0)
       return console.log("Not Products. Please Add New Product");
     if (products.length > 20) return console.log("Maximum Products.");
     await addCart(browser, products);
-    console.log("Success!");
-  }
+  } else autoLogin(browser);
 })();
