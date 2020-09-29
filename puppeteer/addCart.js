@@ -1,15 +1,18 @@
 const handleAddCart = async (page, product) => {
-  const { variation, url } = product;
+  const { variations, url } = product;
   await page.goto(url, { waitUntil: "networkidle0" });
 
-  if (variation && String(variation).length !== 0) {
+  if (variations && Array(variations).length !== 0) {
     await page.waitForSelector(".product-variation");
-    await page.evaluate((variation) => {
+    await page.evaluate((variations) => {
       const products = document.querySelectorAll(".product-variation");
       products.forEach((product) => {
-        if (product.innerText === variation) product.click();
+        variations.forEach((element) => {
+          console.log(element);
+          if (product.innerText === element) product.click();
+        });
       });
-    }, variation);
+    }, variations);
   }
 
   await page.waitForSelector(".btn.btn-tinted.btn--l.YtgjXY._3a6p6c");
