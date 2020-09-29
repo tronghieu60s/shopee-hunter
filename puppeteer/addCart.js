@@ -1,5 +1,19 @@
 const handleAddCart = async (page, product) => {
   const { variations, url } = product;
+
+  // Block Font and Images Load
+  await page.setRequestInterception(true);
+  page.on("request", (req) => {
+    if (
+      req.resourceType() == "font" ||
+      req.resourceType() == "image"
+    ) {
+      req.abort();
+    } else {
+      req.continue();
+    }
+  });
+
   await page.goto(url, { waitUntil: "networkidle0" });
 
   if (variations && Array(variations).length !== 0) {
