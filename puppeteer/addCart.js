@@ -16,7 +16,7 @@ const handleAddCart = async (page, product) => {
 
   await page.goto(url, { waitUntil: "networkidle0" });
 
-  if (variations && Array(variations).length !== 0) {
+  if (variations && variations.length !== 0) {
     await page.waitForSelector(".product-variation");
     await page.evaluate((variations) => {
       const products = document.querySelectorAll(".product-variation");
