@@ -1,6 +1,8 @@
 const handleAddCart = async (page, product) => {
   const { variations, url } = product;
 
+  // Set Timeout
+  await page.setDefaultNavigationTimeout(0); 
   // Block Font and Images Load
   await page.setRequestInterception(true);
   page.on("request", (req) => {
@@ -17,7 +19,6 @@ const handleAddCart = async (page, product) => {
   await page.goto(url, { waitUntil: "networkidle0" });
 
   if (variations && variations.length !== 0) {
-    await page.waitForSelector(".product-variation");
     await page.evaluate((variations) => {
       const products = document.querySelectorAll(".product-variation");
       products.forEach((product) => {

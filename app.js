@@ -16,9 +16,11 @@ const products = require("./products.json");
   });
 
   if (loginExists) {
-    if (products.length === 0)
+    const numberProducts = products.length;
+    console.log(`Length: ${numberProducts}`);
+    if (numberProducts === 0)
       return console.log("Not Products. Please Add New Product");
-    if (products.length > 20) return console.log("Maximum Products.");
+    if (numberProducts > 20) return console.log("Maximum Products.");
     await addCart(browser, products);
     await checkout(browser);
   } else autoLogin(browser);
